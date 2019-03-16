@@ -32,9 +32,9 @@ app.ws('/chat/:roomName', function(ws, req, next) {
 
     // register handlers for message-received, connection-closed
 
-    ws.on('message', function(data) {
+    ws.on('message', async function(data) {
       try {
-        user.handleMessage(data);
+        await user.handleMessage(data);
       } catch (err) {
         console.error(err);
       }

@@ -51,6 +51,12 @@ class Room {
       member.send(JSON.stringify(data));
     }
   }
+
+  /** send message to this member, not to everyone else */
+  tellJoke(member, data) {
+    member.send(data);
+    member.send(JSON.stringify(data));
+  }
 }
 
 module.exports = Room;

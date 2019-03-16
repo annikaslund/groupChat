@@ -1,3 +1,4 @@
+const axios = require('axios')
 /** Functionality related to chatting. */
 
 // Room is an abstraction of a chat channel
@@ -47,16 +48,37 @@ class ChatUser {
     });
   }
 
+  /** handle a joke: send a random joke to the user */
+  
+  handleJoke(text) {
+    debugger;
+    this.room.tellJoke(this, 
+      {
+        name: this.name,
+        type: 'chat',
+        text: text
+      });
+  }
+
+  async getRandomeJoke() {
+    let response = await axios.get('https://icanhazdadjoke.com/', {headers: {"Accept": "application/json"}});
+    let msg = response.data.joke;
+    return msg;
+  }
+
   /** Handle messages from client:
    *
    * - {type: "join", name: username} : join
    * - {type: "chat", text: msg }     : chat
    */
 
-  handleMessage(jsonData) {
+  async handleMessage(jsonData) {
     let msg = JSON.parse(jsonData);
-
     if (msg.type === 'join') this.handleJoin(msg.name);
+    else if (msg.type === 'chat' && msg.text === '/joke') {
+      let joke = await this.getRandomeJoke();
+      this.handleJoke(joke);
+    }
     else if (msg.type === 'chat') this.handleChat(msg.text);
     else throw new Error(`bad message: ${msg.type}`);
   }
